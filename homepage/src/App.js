@@ -2,86 +2,83 @@ import React, { useState } from 'react';
 import './App.css';
 
 function App() {
-  const [pwdNotEquals, setPwdNotEquals] = useState(false);
-  const [notUniqueEmail, setNotUniqueEmail] = useState(false);
-  const [notUniqueUsername, setNotUniqueUsername] = useState(false); 
-  function handleSubmit(event) {
-    event.preventDefault();
-    let url = "/untitled/signup";
-    const data = new FormData(event.target);
-    if (data.get("pwd") !== data.get("pwdCheck")) {
-      console.log(data.get("pwd") + ":" + data.get("pwdCheck"));
-      setPwdNotEquals(true);
-      // ###
-      setNotUniqueEmail(false);
-      setNotUniqueUsername(false);
-    } else {
-      const base64encodedPwdandLogin = btoa(data.get("uname") + ":" + data.get("pwd"));
-      const base64encodedEmailandAbout = btoa(data.get("email") + ":" + data.get("about"));
-      fetch(url, {method:'POST', crossDomain:true,
-        headers: {'Content-Type':'application/json','Registration': 'Basic ' + base64encodedPwdandLogin + ' Other ' + base64encodedEmailandAbout}})
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.status === "success") {
-            window.location.replace("/untitled/login");
-          } else if (data.status === "nonUniqueEmail") {
-            setNotUniqueEmail(true);
-            // ###
-            setNotUniqueUsername(false);
-            setPwdNotEquals(false);
-          } else if (data.status === "nonUniqueName") {
-            setNotUniqueUsername(true);
-            // ###
-            setNotUniqueEmail(false);
-            setPwdNotEquals(false);
-          }
-        }).catch(function(err) {  
-          if (err.message === 'Network Error') {
-            alert("Ошибка соединения");
-          }
-        });
+
+  const nameForTest = "123";
+  const name = "isAuthorized";
+  function getCookie(name) {
+    let cookies = document.cookie.split(';');
+    for(let i = 0; i < cookies.length; i++) {
+        let cookie = cookies[i].trim();
+        // Проверяем, что куки начинается с нужного имени
+        if (cookie.indexOf(name + '=') == 0) {
+            return cookie.substring(name.length + 1, cookie.length);
+        }
     }
+    return null;
+  }
+  const i = getCookie(name);
+  function isAuthorized(cookie) {
+    const str = atob(cookie);
+    return str.startsWith("true:") ? true : false;
   }
 
   return (
-    <div>
-      <header className="login__header">
-          <h2>
-              <svg className="icon">
-                  <use xlinkHref="#icon-lock" />
-              </svg>
-              KitchenMate
-          </h2>
-      </header>
-      <form onSubmit={handleSubmit} className="login__form" method="POST">
-          <div>
-              {notUniqueUsername && (<label htmlFor="uname" id="warning" style={{color: "red"}}>Данное имя пользователя уже существует!</label>)}
-              {!notUniqueUsername && (<label htmlFor="uname">Имя пользователя</label>)}
-              <input type="text" id="uname" name="uname" placeholder="Имя пользователя"></input>
+  <div>
+    <header class="header">
+      <a href="#" class="logo">KitchenMate</a>
+      {isAuthorized(i) && (<nav class="nav-items">
+          <a href="/untitled/home">Главная</a>
+          <a href="/untitled/recipes">Рецепты</a>
+          <a href="/untitled/profile">Личный кабинет</a>
+      </nav>)}
+      {!isAuthorized(i) &&  (<nav class="nav-items">
+          <a href="/untitled/home">Главная</a>
+          <a href="/untitled/recipes">Рецепты</a>
+          <a href="/untitled/signup">Регистрация</a>
+          <a href="/untitled/login">Вход</a>
+      </nav>)}
+    </header>
+    <main>
+      <div className="intro">
+          <h1>KitchenMate</h1>
+          <p>Интересные рецепты вы можете найти здесь</p>
+          <button>Посмотреть рецепты</button>
+      </div>
+      <div className="achievements">
+          <div className="work">
+              <i className="fa fa-coffee" aria-hidden="true"></i>
+              <p className="work-heading">Напитки</p>
+              <p className="work-text">Здесь вы сможете найти много разнообразных рецептов напитков, как горячих, так и холодных, а также поделиться своими рецептами.</p>
           </div>
-          <div>
-              <label htmlFor="pwd">Пароль</label>
-              <input type="password" id="pwd" name="pwd" placeholder="Пароль"></input>
+          <div className="work">
+              <i className="fa fa-heart" aria-hidden="true"></i>
+              <p className="work-heading">Здоровая еда</p>
+              <p className="work-text">Множество людей объединились в одно сообщество, чтобы делиться своими рецептами здорового образа жизни и получать новый опыт.</p>
           </div>
-          <div>
-              {pwdNotEquals && (<label htmlFor="pwdCheck" id="warning" style={{color: "red"}}>Пароли не совпадают!</label>)}
-              {!pwdNotEquals && (<label htmlFor="pwdCheck">Подтверждение пароля</label>)}
-              <input type="password" id="pwdCheck" name="pwdCheck" placeholder="Подтвердите пароль"></input>
+          <div className="work">
+              <i className="fa fa-certificate" aria-hidden="true"></i>
+              <p className="work-heading">Русская кухня</p>
+              <p className="work-text">Русская кухня очень многогранна и разнообразна. Она складывалась на протяжении многих веков, обогащалась культой других народов. </p>
           </div>
-          <div>
-              {notUniqueEmail && (<label htmlFor="email" id="warning" style={{color: "red"}}>Почта занята!</label>)}
-              {!notUniqueEmail && (<label htmlFor="email">Почта</label>)}
-              <input type="email" id="email" name="email" placeholder="Введите e-mail"></input>
+      </div>
+      <div className="about-me">
+          <div className="about-me-text">
+              <h2>О приложении</h2>
+              <p>KitchenMate - приложение для поиска рецептов. Оно было сделано для упрощения жизни пользователя, чтобы он не думал, что ему приготовить и мог найти это в подобных приложениях.</p>
           </div>
-          <div>
-              <label htmlFor="about">О себе</label>
-              <textarea rows="4" className="bigInput" name="about" id="about" cols="25" placeholder="Расскажите немного о себе"></textarea>
+      </div>
+    </main>
+    <footer class="footer">
+      <div class="copy">&copy; 2024 Ososov S.A.</div>
+      <div class="bottom-links">
+          <div class="links">
+              <span>Контакты</span>
+              <a href="#">helloimclinker@gmail.com</a>
           </div>
-          <div>
-              <input className="button" type="submit" value="Зарегистрироваться"></input>
-          </div>
-      </form>
-    </div> );
+      </div>
+    </footer>
+  </div>
+  );
 }
 
 export default App;
