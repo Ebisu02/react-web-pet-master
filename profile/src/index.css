@@ -219,6 +219,7 @@ svg {
 .uAbout {
   display:block;
   word-break: break-all;
+  resize: none;
 }
 
 .aboutContainer {

@@ -5,6 +5,12 @@ function App() {
 
   const nameForTest = "123";
   const name = "isAuthorized";
+
+  function signout() {
+    document.cookie="isAuthorized=; Max-Age=-1;";
+    window.location.replace("/untitled");
+  }
+
   function getCookie(name) {
     let cookies = document.cookie.split(';');
     for(let i = 0; i < cookies.length; i++) {
@@ -16,13 +22,15 @@ function App() {
     }
     return null;
   }
+
   const i = getCookie(name);
+
   function isAuthorized(cookie) {
     const str = atob(cookie);
     return str.startsWith("true:") ? true : false;
   }
 
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState({});
   const getApiData = async() => {
     const response = await fetch(
       "/untitled/profile", {method:'POST', crossDomain:true}
@@ -35,14 +43,14 @@ function App() {
 
   return (
   <div>
-    <header class="header">
-      <a href="#" class="logo">KitchenMate</a>
-      {isAuthorized(i) && (<nav class="nav-items">
+    <header className="header">
+      <a href="#" className="logo">KitchenMate</a>
+      {isAuthorized(i) && (<nav className="nav-items">
           <a href="/untitled/home">Главная</a>
           <a href="/untitled/recipes">Рецепты</a>
           <a href="/untitled/profile">Личный кабинет</a>
       </nav>)}
-      {!isAuthorized(i) &&  (<nav class="nav-items">
+      {!isAuthorized(i) && (<nav className="nav-items">
           <a href="/untitled/home">Главная</a>
           <a href="/untitled/recipes">Рецепты</a>
           <a href="/untitled/signup">Регистрация</a>
@@ -50,50 +58,47 @@ function App() {
       </nav>)}
     </header>
     <main>
-      <div class="login">
-        <header class="login__header">
+      <div className="login">
+        <header className="login__header">
           <h2>
-            <svg class="icon">
-              <use xlinHref="#icon-lock" />
+            <svg className="icon">
+              <use xlinkHref="#icon-lock" />
             </svg>
             KitchenMate
           </h2>
         </header>
-        {users.map((user) => (
+      
         <div class="login__form">
           <div>
-            <label class="uName">Имя пользователя: {user.name}</label>
+            <label className="uName">Имя пользователя: {users.name ? users.name : "null"}</label>
           </div>
           <div>
-            <label class="uMail">Почта: {user.mail}</label>
+            <label className="uMail">Почта: {users.mail ? users.mail : "null"}</label>
           </div>
           <div>
-            <label class="uAboutLabel">О себе: <br></br>
-              <div class="aboutContainer">
-                <textarea name="about" class="uAbout" cols="45" rows="10">{user.about}</textarea>
-                <button class="submitAbout">Подтвердить</button>
+            <label className="uAboutLabel">О себе: <br></br>
+              <div className="aboutContainer">
+                <textarea name="about" readOnly="true" disabled="true" className="uAbout" cols="45" rows="10" value={users.i || "null"}></textarea>
               </div>
             </label>
           </div>
           <div>
             <br></br>
-            <input class="changePwd" type="button" value="Сменить пароль"></input>
-            <br></br>
-            <input class="signOut" type="button" value="Выйти из аккаунта"></input>
+            <input className="signOut" type="button" onClick={signout} value="Выйти из аккаунта"></input>
           </div>
-        </div>))}
+        </div>
       </div>
     </main>
-    <footer class="footer">
-      <div class="copy">&copy; 2024 Ososov S.A.</div>
+    <footer className="footer">
+      <div className="copy">&copy; 2024 Ososov S.A.</div>
       <div className="about-me">
           <div className="about-me-text">
               <h2>О приложении</h2>
               <p>KitchenMate - приложение для поиска рецептов. Оно было сделано для упрощения жизни пользователя, чтобы он не думал, что ему приготовить и мог найти это в подобных приложениях.</p>
           </div>
       </div>
-      <div class="bottom-links">
-          <div class="links">
+      <div className="bottom-links">
+          <div className="links">
               <span>Контакты</span>
               <a href="#">helloimclinker@gmail.com</a>
           </div>
