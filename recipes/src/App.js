@@ -26,7 +26,7 @@ function App() {
   const [recips, setRecipes] = useState([]);
   const getApiData = async() => {
     const response = await fetch(
-      `http://localhost:8080/untitled/recipes?page=${pageCounter + 1}`, {mode:'cors', method:'POST', crossDomain:true}
+      `/untitled/recipes?page=${pageCounter + 1}`, {mode:'cors', method:'POST', crossDomain:true}
     ).then((response) => response.json());
     setRecipes(response);
   };
