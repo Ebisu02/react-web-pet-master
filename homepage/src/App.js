@@ -3,6 +3,10 @@ import './App.css';
 
 function App() {
 
+  function goToRecipes() {
+    window.location.replace("/untitled/recipes");
+  }
+
   const nameForTest = "123";
   const name = "isAuthorized";
   function getCookie(name) {
@@ -42,7 +46,7 @@ function App() {
       <div className="intro">
           <h1>KitchenMate</h1>
           <p>Интересные рецепты вы можете найти здесь</p>
-          <button>Посмотреть рецепты</button>
+          <button onClick={goToRecipes}>Посмотреть рецепты</button>
       </div>
       <div className="achievements">
           <div className="work">
