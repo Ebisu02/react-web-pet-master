@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 
 function App() {
@@ -22,40 +22,63 @@ function App() {
     return str.startsWith("true:") ? true : false;
   }
 
+  const [pageCounter, setPageCounter] = useState(0);
+  const [recips, setRecipes] = useState([]);
+  const getApiData = async() => {
+    const response = await fetch(
+      `http://localhost:8080/untitled/recipes?page=${pageCounter + 1}`, {mode:'cors', method:'POST', crossDomain:true}
+    ).then((response) => response.json());
+    setRecipes(response);
+  };
+
+  useEffect(() => {
+    getApiData();
+  }, [pageCounter]);
+
+  const handleNextPage = () => {
+    setPageCounter(pageCounter + 1);
+  };
+
+  const handlePreviousPage = () => {
+    if (pageCounter > 0) {
+      setPageCounter(pageCounter - 1);
+    }
+  };
+
   const recipes = [
     {
       name: 'Spaghetti Carbonara',
-      description: 'A classic Italian pasta dish.',
+      howToCook: 'A classic Italian pasta dish.',
       ingredients: 'Spaghetti'
     },
     {
       name: 'Spaghetti Carbonara',
-      description: 'A classic Italian pasta dish.',
+      howToCook: 'A classic Italian pasta dish.',
       ingredients: 'Spaghetti'
     },
     {
       name: 'Spaghetti Carbonara',
-      description: 'A classic Italian pasta dish.',
+      howToCook: 'A classic Italian pasta dish.',
       ingredients: 'Spaghetti'
     },
     {
       name: 'Spaghetti Carbonara',
-      description: 'A classic Italian pasta dish.',
+      howToCook: 'A classic Italian pasta dish.',
       ingredients: 'Spaghetti'
     },
     {
       name: 'Spaghetti Carbonara',
-      description: 'A classic Italian pasta dish.',
+      howToCook: 'A classic Italian pasta dish.',
       ingredients: 'Spaghetti'
     },
     {
       name: 'Spaghetti Carbonara',
-      description: 'A classic Italian pasta dish.',
+      howToCook: 'A classic Italian pasta dish.',
       ingredients: 'Spaghetti'
     },
     {
       name: 'Chicken Curry',
-      description: 'A spicy and flavorful dish.',
+      howToCook: 'A spicy and flavorful dish.',
       ingredients: 'Powder, Coconut Milk, Onion, Garlic'
     }
     // Добавьте больше рецептов по необходимости
@@ -79,23 +102,49 @@ function App() {
     </header>
     <main>
       <div className="intro">
-        <div>
-          <ul>
-            {recipes.map((recipe, index) => (
+          <ul className='recipe'>
+            {recips.map((recipe, index) => (
               <li key={index}>
                 <div className="recipeItem">
-                  <img clasName="recipeImg"
-                  width={250} height={200}
-                  src="https://plus.unsplash.com/premium_photo-1663852297267-827c73e7529e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)">
-                  </img>
-                  <div className='recipeTitle'>
-                    <h3>{recipe.name}</h3>
+                  <div className='recipeCard'>
+                    <img clasName="recipeImg"
+                    width={250} height={200}
+                    alt="recipe"
+                    src={`jsp/recipes/images/${recipe.imgPath}`}
+                    onError={(e) => e.target.src=`jsp/recipes/images/404.png`}>
+                    </img>
+                    <div className='recipeTitle'>
+                      <h3>{recipe.name}</h3>
+                    </div>
+                  </div>
+                  <div className='recipeIngr'>
+                    <h3>Инригриденты:</h3>
+                    <ul>
+                      {recipe.ingredients.split(', ').map((ingredient, index1) => (
+                        <li key={index1}>
+                          {ingredient}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className='recipeHowto'>
+                    <h3>Как готовить:</h3>
+                    <div>
+                      {recipe.howToCook}
+                    </div>
                   </div>
                 </div>
               </li>
             ))}
           </ul>
-        </div>
+          <div className='pagination'>
+            {pageCounter > 0 && (
+              <button onClick={handlePreviousPage} className='nextButton'>Предыдущая</button>
+            )}
+            {recips.length > 0 && (
+              <button onClick={handleNextPage} className='prevButton'>Следующая</button>
+            )}
+          </div>
       </div>
     </main>
     <footer class="footer">
